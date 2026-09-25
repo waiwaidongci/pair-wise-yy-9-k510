@@ -30,6 +30,52 @@
           "repair": "边角重涂",
           "note": "放入A盒"
         }
+      ],
+      "id": "CN-001",
+      "history": [
+        {
+          "at": "2026-06-20",
+          "step": "涂布",
+          "note": "旧档补登",
+          "migrated": true
+        },
+        {
+          "at": "2026-06-20",
+          "step": "晾干",
+          "note": "旧档补登",
+          "migrated": true
+        },
+        {
+          "at": "2026-06-20",
+          "step": "曝光",
+          "note": "阴天补时2分钟"
+        },
+        {
+          "at": "2026-06-20",
+          "step": "冲洗",
+          "note": "旧档补登",
+          "migrated": true,
+          "defect": "边角显影不均"
+        },
+        {
+          "at": "2026-06-20",
+          "step": "修版",
+          "note": "旧档补登",
+          "migrated": true,
+          "repair": "边角重涂"
+        },
+        {
+          "at": "2026-06-20",
+          "step": "复晒",
+          "note": "旧档补登",
+          "migrated": true
+        },
+        {
+          "at": "2026-06-20",
+          "step": "冲洗",
+          "note": "旧档补登复检",
+          "migrated": true
+        }
       ]
     }
   ]

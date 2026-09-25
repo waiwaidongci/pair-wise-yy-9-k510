@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>古法蓝晒底片整理室</title>
+  <style>
+    :root { --bg:#f1f3ef; --panel:#fff; --ink:#20241f; --muted:#687066; --line:#d4ddd0; --accent:#526f43; --warn:#9b4937; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--ink); font-family:Arial,"PingFang SC",sans-serif; }
+    header { padding:22px 28px; background:#fff; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:16px; align-items:center; }
+    h1 { margin:0; font-size:26px; } h2 { margin:0 0 12px; font-size:18px; } h3 { margin:0; font-size:17px; }
+    main { display:grid; grid-template-columns:380px 1fr; gap:22px; padding:22px 28px; }
+    form,.panel,.card,.stat { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; }
+    label { display:block; margin:10px 0 5px; color:var(--muted); font-size:13px; }
+    input,select,textarea { width:100%; border:1px solid var(--line); border-radius:6px; padding:9px; font:inherit; background:#fff; }
+    textarea { min-height:60px; }
+    button { border:0; border-radius:6px; background:var(--accent); color:#fff; padding:10px 13px; font-weight:700; cursor:pointer; }
+    button.secondary { background:#69736a; font-weight:400; }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:10px; margin-bottom:14px; }
+    .stat strong { display:block; font-size:22px; }
+    .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .toolbar select,.toolbar input { width:auto; min-width:160px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
+    .card { display:grid; gap:8px; align-content:start; }
+    .meta { color:var(--muted); font-size:13px; }
+    .pill { display:inline-block; justify-self:start; border:1px solid var(--line); border-radius:999px; padding:3px 10px; font-size:12px; }
+    .pill.repair { border-color:var(--warn); color:var(--warn); }
+    .pill.done { background:#eef3ea; }
+    .pending { margin:0; padding-left:18px; color:var(--warn); font-size:13px; }
+    .timeline { border-top:1px solid var(--line); padding-top:8px; margin:4px 0 0; list-style:none; max-height:180px; overflow:auto; font-size:13px; }
+    .timeline li { padding:3px 0; border-bottom:1px dashed var(--line); }
+    .timeline .at { color:var(--muted); margin-right:6px; }
+    .timeline .tag { color:var(--muted); font-size:11px; margin-left:4px; }
+    .advance { margin-top:6px; border-top:1px solid var(--line); padding-top:10px; display:grid; gap:6px; }
+    .advance .btns { display:flex; gap:8px; }
+    #toast { position:fixed; right:20px; bottom:20px; max-width:380px; background:#2d2d2a; color:#fff; padding:12px 16px; border-radius:8px; display:none; white-space:pre-line; font-size:13px; }
+    #toast.error { background:var(--warn); }
+    .hint { color:var(--muted); font-size:12px; margin-top:6px; }
+    @media (max-width:900px){ header{display:block;padding:18px 16px;} main{grid-template-columns:1fr;padding:16px;} }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>古法蓝晒底片整理室</h1>
+      <div class="meta">建档 → 涂布 → 晾干 → 曝光 → 冲洗 → 入盒；冲洗缺陷须修版复晒，修补记录齐全方可入盒</div>
+    </div>
+    <button id="reload">刷新</button>
+  </header>
+  <main>
+    <section>
+      <form id="createForm">
+        <h2>新增底片（建档）</h2>
+        <div id="createFields"></div>
+        <div class="hint">编号可留空，系统按内部档号流转；新片一律从「建档」开始，不可越级。</div>
+        <p><button>建档</button></p>
+      </form>
+      <form id="advanceForm" style="margin-top:14px">
+        <h2>工序推进</h2>
+        <label>选择底片</label>
+        <select name="id" id="itemSelect"></select>
+        <label>下一步工序（只能按流程推进，不可跳步）</label>
+        <select name="step" id="stepSelect"></select>
+        <div id="stepFields"></div>
+        <p><button>提交工序</button></p>
+      </form>
+    </section>
+    <section>
+      <div class="stats" id="stats"></div>
+      <div class="toolbar">
+        <select id="statusFilter"><option value="">全部状态</option></select>
+        <input id="search" placeholder="搜索编号、盒位或关键词">
+      </div>
+      <div class="panel">
+        <h2>底片档案</h2>
+        <div class="grid" id="cards"></div>
+      </div>
+    </section>
+  </main>
+  <div id="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
