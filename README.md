@@ -1,9 +1,37 @@
 # 古法蓝晒底片整理室
 
-运行：
+蓝晒底片工艺流转系统：建档后按 **涂布 → 晾干 → 曝光 → 冲洗 → 入盒** 逐道推进，
+步骤不可越级；冲洗发现缺陷时先 **修版 → 复晒 → 冲洗复检**，修补记录为空不允许入盒。
+
+## 运行
 
 ```bash
 npm start
 ```
 
-访问`http://localhost:3040`。数据保存在`data/cyanotype-negative-room.json`。
+访问 `http://localhost:3040`。数据保存在 `data/cyanotype-negative-room.json`
+（可用环境变量 `DB_PATH` 指定其他数据文件，`PORT` 指定端口）。
+
+## 代码结构（三类业务分离）
+
+| 文件 | 职责 |
+| --- | --- |
+| `workflow.js` | **状态判定**：工序链、下一步推导、越级与修补记录校验（纯函数，不碰文件和页面） |
+| `store.js` | **数据保存**：JSON 读写、旧档迁移（缺编号/缺 id 也可流转）、建档与推进落盘 |
+| `view.js` | **页面操作**：渲染当前工序、待补事项、完整历史与"逐道推进"表单 |
+| `server.js` | HTTP 路由与错误码映射（越级提交返回 **409**，不写盘，原档案保留） |
+
+## 规则
+
+- 页面不再提供状态下拉框，只能提交"下一步工序"；提交工序与当前应推进工序不一致时返回 `409 out_of_order`。
+- 修版必须填写修补记录（`409 repair_required`）；存在未闭合缺陷时入盒同样 `409 repair_required`。
+- 已入盒底片流程结束，再提交返回 `409 already_finished`；全部历史（含旧档记录、返修轮次）保留可查。
+- 旧档案缺少内部 id 时启动自动补号；仅有 `logs` 的历史会迁入工序链，从实际到达的工序继续流转。
+
+## API
+
+- `GET /api/items` — 底片列表（含派生的当前工序、待补事项、完整历史）
+- `POST /api/items` — 建档（`code` 可留空）
+- `POST /api/items/:id/transitions` — 推进一道工序（`step` 必填，按工序附带 `defect`/`repair`/`box` 等）
+- `POST /api/items/:id/notes` — 追加备注（不改变工序）
+- `GET /api/stats` — 各工序数量
